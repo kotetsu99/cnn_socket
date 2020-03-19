@@ -45,51 +45,73 @@ def main():
     model = keras.models.load_model(savefile)
 
     # ソケット定義(IPv4,TCPによるソケット)
-    serversock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # TIME-WAIT状態が切れる前にソケットを再利用
-    serversock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # IPとPORTを指定してバインド
-    serversock.bind((host,port))
-    # ソケット接続待受（キューの最大数を指定）
-    serversock.listen(10)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    while True:
-        # ソケット接続受信待ち
-        try:
-            print 'クライアントからの接続待ち...'
-            # 接続されればデータを格納
-            clientsock, client_address = serversock.accept()
+    try:
+        # TIME-WAIT状態が切れる前にソケットを再利用
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # IPとPORTを指定してバインド
+        s.bind((host,port))
+        # ソケット接続待受（キューの最大数を指定）
+        s.listen(10)
 
-        # 接続待ちの間に強制終了が入った時の例外処理
-        except KeyboardInterrupt:
-            print 'Ctrl + C により強制終了'
-            break
+        while True:
+            # ソケット接続受信待ち
+            try:
+                print 'クライアントからの接続待ち...'
+                # 接続されればデータを格納
+                clientsock, client_address = s.accept()
 
-        # 接続待ちの間に強制終了なく、クライアントからの接続が来た場合
-        else:
-            # 画像保存先ファイルオープン
-            f =  open(sc_dir + '/' + sc_file, 'wb')
+            # 接続待ちの間に強制終了が入った時の例外処理
+            except KeyboardInterrupt:
+                print 'Ctrl + C により強制終了'
+                break
 
-            # ソケット接続開始後の処理
-            while True:
-                # データ受信。受信バッファサイズ1024バイト
-                data = clientsock.recv(1024)
-                # 全データ受信完了（受信路切断）時に、応答・切断処理開始
-                if not data:
-                    # ファイルクローズ
-                    f.close()
-                    # AI画像認識
-                    res = cnn_recognition(model, classes)
-                    # 認識結果をクライアントに送信
-                    clientsock.sendall(res)
-                    # コネクション切断
-                    clientsock.close()
-                    break
-                # ファイルにデータ書込
-                f.write(data)
-        
-    # ソケットクローズ(強制終了時に実行）
-    serversock.close()
+            # 接続待ちの間に強制終了なく、クライアントからの接続が来た場合
+            else:
+                # 受信処理を行い、画像認識結果を返す
+                recv_client_data(clientsock, model, classes)
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        # ソケットを閉じる
+        s.close()
+
+
+def recv_client_data(clientsock, model, classes):
+    # 受信データ保存用変数の初期化
+    all_data = ''
+    
+    try:
+        # ソケット接続開始後の処理
+        while True:
+            # データ受信。受信バッファサイズ1024バイト
+            data = clientsock.recv(1024)
+            # 全データ受信完了（受信路切断）時に、応答・切断処理開始
+            if not data:
+                break
+            # 受信データを追加し繋げていく
+            all_data += data
+
+        # 受信画像ファイル保存
+        with open(sc_dir + '/' + sc_file, 'wb') as f:
+            # ファイルにデータ書込
+            f.write(all_data)
+
+        # AI画像認識
+        res = cnn_recognition(model, classes)
+        # 認識結果をクライアントに送信
+        clientsock.sendall(res)
+
+    except Exception as e:
+        print '受信処理エラー発生'
+        print(e)
+
+    finally:
+        # コネクション切断
+        clientsock.close()
 
 
 def cnn_recognition(model, classes):

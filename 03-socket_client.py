@@ -25,21 +25,29 @@ def main():
 
     # ソケットクライアント作成
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # 送信先サーバを指定
-    s.connect((host, port))
 
-    # サーバにバイナリデータを送る
-    print(image_file + 'をサーバーに送信')
-    s.sendall(binary)
-    # データ送信完了後、送信路を閉じる
-    s.shutdown(1)
+    try:
+        # 送信先サーバーに接続
+        s.connect((host, port))
 
-    # サーバからの応答を取得。バッファサイズ1024バイト
-    res = s.recv(1024)
-    # サーバ応答を表示
-    print('認識結果： ' + res)
-    # 接続を切断して終了
-    s.close()
+        # サーバーにバイナリデータを送る
+        print(image_file + 'をサーバーに送信')
+        s.sendall(binary)
+        # データ送信完了後、送信路を閉じる
+        s.shutdown(1)
+
+        # サーバーからの応答を取得。バッファサイズ1024バイト
+        res = s.recv(1024)
+        # サーバー応答を表示
+        print('認識結果： ' + res)
+
+    except Exception as e:
+        # 例外が発生した場合、内容を表示
+        print(e)
+
+    finally:
+        # ソケットを閉じて終了
+        s.close()
 
 
 if __name__ == '__main__':
