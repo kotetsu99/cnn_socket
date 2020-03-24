@@ -37,7 +37,7 @@ def main():
 
     # 学習済ファイルの確認
     if not len(sys.argv)==2:
-        print('使用法: python cnn_server.py 学習済ファイル名.h5')
+        print('使用法: python 02-cnn_server.py 学習済ファイル名.h5')
         sys.exit()
     savefile = sys.argv[1]
 
@@ -48,9 +48,9 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
-        # TIME-WAIT状態が切れる前にソケットを再利用
+        # 次の実行に備え、ソケットをTIME-WAIT切れを待つことなく、再利用できるようにしておく
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        # IPとPORTを指定してバインド
+        # IPとPORTを指定してバインド（ソケットに紐づけ）
         s.bind((host,port))
         # ソケット接続待受（キューの最大数を指定）
         s.listen(10)
@@ -59,12 +59,12 @@ def main():
             # ソケット接続受信待ち
             try:
                 print 'クライアントからの接続待ち...'
-                # 接続されればデータを格納
+                # 接続が来たら対応する新しいソケットオブジェクト作成、接続先アドレスを格納
                 clientsock, client_address = s.accept()
 
             # 接続待ちの間に強制終了が入った時の例外処理
             except KeyboardInterrupt:
-                print 'Ctrl + C により強制終了'
+                print ' Ctrl + C により強制終了'
                 break
 
             # 接続待ちの間に強制終了なく、クライアントからの接続が来た場合
@@ -83,13 +83,13 @@ def main():
 def recv_client_data(clientsock, model, classes):
     # 受信データ保存用変数の初期化
     all_data = ''
-    
+
     try:
         # ソケット接続開始後の処理
         while True:
             # データ受信。受信バッファサイズ1024バイト
             data = clientsock.recv(1024)
-            # 全データ受信完了（受信路切断）時に、応答・切断処理開始
+            # 全データ受信完了（受信路切断）時に、ループ離脱
             if not data:
                 break
             # 受信データを追加し繋げていく
@@ -100,7 +100,7 @@ def recv_client_data(clientsock, model, classes):
             # ファイルにデータ書込
             f.write(all_data)
 
-        # AI画像認識
+        # 受信画像ファイルに対しAIで画像認識を実行
         res = cnn_recognition(model, classes)
         # 認識結果をクライアントに送信
         clientsock.sendall(res)
@@ -128,12 +128,12 @@ def cnn_recognition(model, classes):
     # 画像サンプルが1枚のみなので、最初の1枚[0]の認識結果を格納
     pred = model.predict(x)[0]
 
-    # 予測確率が高いトップを出力
-    # 今回は最も似ているクラスのみ出力したいので1にしているが、上位n個を表示させることも可能。
-    top = 3
+    # 予測確率が高い順番に認識結果を出力
+    top = 4
     top_indices = pred.argsort()[-top:][::-1]
     result = [(classes[i], pred[i]) for i in top_indices]
-    print('file name is', sc_file)
+    #print('file name is', sc_file)
+    print '受信ファイル認識結果：'
     print(result)
     print('=======================================')
     return result[0][0]

@@ -25,8 +25,8 @@ batch_size = 8
 nb_epoch = 200
 
 # 収束判定ループ（エポック）回数
-#nb_patience = 3
-nb_patience = nb_epoch
+nb_patience = 20
+#nb_patience = nb_epoch
 # 収束判定用差分パラメータ
 val_min_delta = 0.0001
 
@@ -53,7 +53,7 @@ def main():
 
     # 画像ファイルの確認
     if not len(sys.argv)==2:
-        print('使用法: python cnn_train.py モデルファイル名.h5')
+        print('使用法: python 01-cnn_train.py モデルファイル名.h5')
         sys.exit()
     savefile = sys.argv[1]
 
