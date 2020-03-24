@@ -1,18 +1,18 @@
-# $B35MW(B
+# 概要
 
-$B%=%1%C%HDL?.$H2hA|G'<1(BAI$B$rAH$_9g$o$;!"%M%C%H%o!<%/$r2p$7$F2hA|AwIU"*G'<17k2L<hF@$r9T$&%7%9%F%`$N%W%m%0%i%`$G$9!#(B
-
-
-# $B;HMQJ}K!!&2r@b(B
-
-$B$3$A$i$N%V%m%05-;v$r$43NG'$/$@$5$$!#(B
-
-$B!&;HMQJ}K!!'(B https://nine-num-98.blogspot.com/2020/03/ai-socket-01.html
+ソケット通信と画像認識AIを組み合わせ、ネットワークを介して画像送付→認識結果取得を行うシステムのプログラムです。
 
 
-$B!&2r@b!'(B
+# 使用方法・解説
 
-  -$B2hA|G'<1(BAI$B3X=,%W%m%0%i%`!'(B https://nine-num-98.blogspot.com/2020/03/ai-socket-02.html
+こちらのブログ記事をご確認ください。
 
-  -$B%=%1%C%HDL?.%W%m%0%i%`!'(B https://nine-num-98.blogspot.com/2020/03/ai-socket-03.html
+・使用方法： https://nine-num-98.blogspot.com/2020/03/ai-socket-01.html
+
+
+・解説：
+
+  -画像認識AI学習プログラム： https://nine-num-98.blogspot.com/2020/03/ai-socket-02.html
+
+  -ソケット通信プログラム： https://nine-num-98.blogspot.com/2020/03/ai-socket-03.html
 
