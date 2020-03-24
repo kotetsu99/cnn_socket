@@ -12,7 +12,7 @@
 
 ・解説：
 
-  -画像認識AI学習プログラム： https://nine-num-98.blogspot.com/2020/03/ai-socket-02.html
+    -画像認識AI学習プログラム： https://nine-num-98.blogspot.com/2020/03/ai-socket-02.html
 
-  -ソケット通信プログラム： https://nine-num-98.blogspot.com/2020/03/ai-socket-03.html
+    -ソケット通信プログラム： https://nine-num-98.blogspot.com/2020/03/ai-socket-03.html
 
