@@ -25,7 +25,7 @@ batch_size = 8
 nb_epoch = 200
 
 # 収束判定ループ（エポック）回数
-nb_patience = 20
+nb_patience = 40
 #nb_patience = nb_epoch
 # 収束判定用差分パラメータ
 val_min_delta = 0.0001
@@ -49,7 +49,7 @@ def main():
         if os.path.isdir(os.path.join(train_data_dir, d)):
             classes.append(d)
     nb_classes = len(classes)
-    print 'クラス名リスト = ', classes
+    print('クラス名リスト = ', classes)
 
     # 画像ファイルの確認
     if not len(sys.argv)==2:

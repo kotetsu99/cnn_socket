@@ -33,7 +33,7 @@ def main():
     for d in os.listdir(train_data_dir):
         if os.path.isdir(os.path.join(train_data_dir, d)):
             classes.append(d)
-    print 'クラス名リスト = ', classes
+    print('クラス名リスト = ', classes)
 
     # 学習済ファイルの確認
     if not len(sys.argv)==2:
@@ -58,13 +58,13 @@ def main():
         while True:
             # ソケット接続受信待ち
             try:
-                print 'クライアントからの接続待ち...'
+                print('クライアントからの接続待ち...')
                 # 接続が来たら対応する新しいソケットオブジェクト作成、接続先アドレスを格納
                 clientsock, client_address = s.accept()
 
             # 接続待ちの間に強制終了が入った時の例外処理
             except KeyboardInterrupt:
-                print ' Ctrl + C により強制終了'
+                print(' Ctrl + C により強制終了')
                 break
 
             # 接続待ちの間に強制終了なく、クライアントからの接続が来た場合
@@ -82,7 +82,7 @@ def main():
 
 def recv_client_data(clientsock, model, classes):
     # 受信データ保存用変数の初期化
-    all_data = ''
+    all_data = b''
 
     try:
         # ソケット接続開始後の処理
@@ -103,10 +103,10 @@ def recv_client_data(clientsock, model, classes):
         # 受信画像ファイルに対しAIで画像認識を実行
         res = cnn_recognition(model, classes)
         # 認識結果をクライアントに送信
-        clientsock.sendall(res)
+        clientsock.sendall(res.encode())
 
     except Exception as e:
-        print '受信処理エラー発生'
+        print('受信処理エラー発生')
         print(e)
 
     finally:
@@ -133,7 +133,7 @@ def cnn_recognition(model, classes):
     top_indices = pred.argsort()[-top:][::-1]
     result = [(classes[i], pred[i]) for i in top_indices]
     #print('file name is', sc_file)
-    print '受信ファイル認識結果：'
+    print('受信ファイル認識結果：')
     print(result)
     print('=======================================')
     return result[0][0]
